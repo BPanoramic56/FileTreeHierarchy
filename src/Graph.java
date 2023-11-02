@@ -3,11 +3,12 @@ package src;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.File;
-import java.math.BigInteger;
 
 public class Graph {
 
     private static Map<File, Vertex<File>> graphVertices = new HashMap<File, Vertex<File>>();
+    private static File sourceFolder;
+
 
     public Graph(){
     }
@@ -19,102 +20,98 @@ public class Graph {
         }
 
         for (File entry : sourceFolder.listFiles()){
-            // try{
-            //     Thread.sleep(100);
-            // }
-            // catch (Exception InterruptedException){
-            //     ;
-            // }
             if (entry.isDirectory()){
-
-                // System.out.println(entry.getName());
                 createEdge(sourceFolder, entry);
                 createHierarchy(entry);
             }
             else{
-                // System.out.println("\t" + entry.getName());
                 createEdge(sourceFolder, entry);
             }
         }
         return graphVertices;
     }
 
-    public static BigInteger fileCount(File sourceFolder, BigInteger count){
+    public static long fileCount(File sourceFolderInit, long count){
+        graphVertices = new HashMap<File, Vertex<File>>();
+        sourceFolder = sourceFolderInit;
+        return fileCountRecursive(sourceFolder, count);
+    }
+
+    private static long fileCountRecursive(File sourceFolder, long count){
 
         if (sourceFolder.listFiles() == null){
-            return BigInteger.ZERO;
+            return 0;
         }
-        System.out.println(count.toString());
+
         for (File entry : sourceFolder.listFiles()){
-            // try{
-            //     Thread.sleep(100);
-            // }
-            // catch (Exception InterruptedException){
-            //     ;
-            // }
             if (entry.isDirectory()){
-                // System.out.println(entry.getName());
                 createEdge(sourceFolder, entry);
-                count.add(fileCount(entry, count));
+                count = fileCountRecursive(entry, count);
             }
             else{
-                // System.out.println("\t" + entry.getName());
-                count.add(BigInteger.ONE);
+                count++;
                 createEdge(sourceFolder, entry);
             }
         }
         return count;
     }
     
-    public static int directoryCount(File sourceFolder, int count){
+    public static long directoryCount(File sourceFolderInit, long count){
+        graphVertices = new HashMap<File, Vertex<File>>();
+        sourceFolder = sourceFolderInit;
+        return directoryCountRecursive(sourceFolder, count);
+    }
+
+    private static long directoryCountRecursive(File sourceFolder, long count){
 
         if (sourceFolder.listFiles() == null){
-            return count;
+            return 0;
         }
 
-        for (File entry : sourceFolder.listFiles()){
-            // try{
-            //     Thread.sleep(100);
-            // }
-            // catch (Exception InterruptedException){
-            //     ;
-            // }
+         for (File entry : sourceFolder.listFiles()){
             if (entry.isDirectory()){
-                count = directoryCount(entry, count) + 1;
+                createEdge(sourceFolder, entry);
+                count = directoryCountRecursive(entry, count) + 1;
             }
         }
         return count;
     }
 
-    public static String toString(File sourceFolder){
-		StringBuilder finalString = new StringBuilder();
+    public static long FileFolderAverage(){
+        if (graphVertices == null || sourceFolder == null){
+            return 0;
+        }
 
-        // if (sourceFolder.listFiles() == null){
-        //     return "";
-        // }
+        Vertex<File> sourceVertex = graphVertices.get(sourceFolder);
 
-        // for (File entry : sourceFolder.listFiles()){
-        //     if (entry.isDirectory()){
-        //         createEdge(sourceFolder, entry);
-        //         finalString.append("\n" + entry.getName() + "\n\t");
-        //         createHierarchy(entry);
-        //     }
-        //     else{
-        //         createEdge(sourceFolder, entry);
-        //         finalString.append(entry.getName() + "\n");
-        //     }
-        // }
+        return FileFolderAverageRecursive(sourceVertex, 0, 0);
 
-        return finalString.toString();
     }
+
+    private static long FileFolderAverageRecursive(Vertex<File> currentVert, long fileCount, long directoryCount){
+
+        for (Edge<File> edge : currentVert.getEdges()){
+
+            Vertex<File> destination = edge.getDestination();
+
+            if (destination.getData().isDirectory()){
+                directoryCount = FileFolderAverageRecursive(destination, fileCount, directoryCount) + 1;
+            }
+            else{
+                fileCount++;
+            }
+
+        }
+
+        return fileCount/directoryCount;
+
+    }
+
 
     private static void addVertex(File vertexData){
         graphVertices.put(vertexData, new Vertex<File>(vertexData));
     } 
     
-    // private static void addVertex(Vertex<File> vertex){
-    //     graphVertices.put(vertex.getData(), vertex);
-    // }
 
     private static void createEdge(File vertex1Data, File vertex2Data){
         Vertex<File> vertex1 = graphVertices.get(vertex1Data);

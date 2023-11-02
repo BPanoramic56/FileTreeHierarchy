@@ -1,7 +1,6 @@
 package src;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.util.Map;
 
 /**
@@ -59,20 +58,20 @@ public class FileHierarchy{
         return sourceFile;
     }
 
-    public String toString(){
-        return Graph.toString(sourceFile);
-    }
+    // public String toString(){
+    //     return Graph.toString(sourceFile);
+    // }
 
-    public String toString(File customFile){
-        return Graph.toString(customFile);
-    }
+    // public String toString(File customFile){
+    //     return Graph.toString(customFile);
+    // }
 
-    public String toString(String customFilename){
-        File customFile = getSourceFile(customFilename);
-        return Graph.toString(customFile);
-    }
+    // public String toString(String customFilename){
+    //     File customFile = getSourceFile(customFilename);
+    //     return Graph.toString(customFile);
+    // }
 
-    public BigInteger countFiles(Object file){ 
+    public long countFiles(Object file){ 
 
         String filename = null;
         if(file instanceof String)
@@ -80,18 +79,23 @@ public class FileHierarchy{
         else if (file instanceof File)
             filename = ((File)file).getAbsolutePath();
 
-        BigInteger count = BigInteger.valueOf(0);
-        return Graph.fileCount(getSourceFile(filename), count);
+        return Graph.fileCount(getSourceFile(filename), 0);
     }
     
-    public int countFolders(Object file){ 
+    public long countFolders(Object file){ 
         String filename = null;
         if(file instanceof String)
             filename = (String) file;
         else if (file instanceof File)
             filename = ((File)file).getAbsolutePath();
-        int count = 0;
+        
+            long count = 0;
+
         return Graph.directoryCount(getSourceFile(filename), count);
+    }
+
+    public long countAverage(){
+        return Graph.FileFolderAverage();
     }
 
     private File stringToAbsolute(String filename){
