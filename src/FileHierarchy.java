@@ -8,7 +8,6 @@ import java.util.Map;
  */
 public class FileHierarchy{
 
-    // private Graph fileGraph = new Graph();
     private File sourceFile;
 
     /**
@@ -24,9 +23,9 @@ public class FileHierarchy{
      * @param filename - the initial file that will be used as the source of the parent recursion 
      * @return - the last file/folder that the method could find
      */
-    public File getSourceFile(String filename){
+    public File getSourceFile(Object file){
 
-        File f = stringToAbsolute(filename);
+        File f = stringToAbsolute(fileNameArgument(file));
 
         while (f.getParentFile().getParentFile() != null){
             f = f.getParentFile();
@@ -43,53 +42,38 @@ public class FileHierarchy{
      * @return - the complete hierarchy, represented by a Map structure that can be printed
      */
     public Map<File, Vertex<File>> createAbsoluteHierarchy(Object file){
-        String filename = null;
-        if(file instanceof String)
-            filename = (String) file;
-        else if (file instanceof File)
-            filename = ((File)file).getAbsolutePath();
+        String filename = fileNameArgument(file);
 
        return Graph.createHierarchy(getSourceFile(filename));
     }
 
 
-    public File setSourceFile(String filename){
+    /**
+     * Sets the source for future iterations
+     * The source file is the absolute parent of the given file or filename, which is converted to a absolute path 
+     * String via the helper method fileNameArgument()
+     * 
+     * @param filename
+     * @return
+     */
+    public File setSourceFile(Object file){
+
+        String filename = fileNameArgument(file);
+
         this.sourceFile = getSourceFile(filename);
         return sourceFile;
     }
 
-    // public String toString(){
-    //     return Graph.toString(sourceFile);
-    // }
-
-    // public String toString(File customFile){
-    //     return Graph.toString(customFile);
-    // }
-
-    // public String toString(String customFilename){
-    //     File customFile = getSourceFile(customFilename);
-    //     return Graph.toString(customFile);
-    // }
-
     public long countFiles(Object file){ 
-
-        String filename = null;
-        if(file instanceof String)
-            filename = (String) file;
-        else if (file instanceof File)
-            filename = ((File)file).getAbsolutePath();
+        String filename = fileNameArgument(file);
 
         return Graph.fileCount(getSourceFile(filename), 0);
     }
     
     public long countFolders(Object file){ 
-        String filename = null;
-        if(file instanceof String)
-            filename = (String) file;
-        else if (file instanceof File)
-            filename = ((File)file).getAbsolutePath();
-        
-            long count = 0;
+        String filename = fileNameArgument(file);
+
+        long count = 0;
 
         return Graph.directoryCount(getSourceFile(filename), count);
     }
@@ -98,7 +82,27 @@ public class FileHierarchy{
         return Graph.FileFolderAverage();
     }
 
+    public int currentMapSize(){
+        return Graph.size();
+    }
+
     private File stringToAbsolute(String filename){
         return new File(new File(filename).getAbsolutePath());
+    }
+
+    /**
+     * Helper method for transforming the given argument into a absolute path String
+     * @param file 
+     * @return
+     */
+    private String fileNameArgument(Object file){
+        String filename = null;
+        if(file instanceof String)
+            filename = (String) file;
+        
+        else if (file instanceof File)
+            filename = ((File)file).getAbsolutePath();
+
+        return filename;
     }
 }

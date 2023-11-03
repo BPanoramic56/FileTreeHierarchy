@@ -13,6 +13,10 @@ public class Graph {
     public Graph(){
     }
 
+    public static int size(){
+        return graphVertices.size();
+    }
+
     public static Map<File, Vertex<File>> createHierarchy(File sourceFolder){
 
         if (sourceFolder.listFiles() == null){
@@ -67,7 +71,6 @@ public class Graph {
         if (sourceFolder.listFiles() == null){
             return 0;
         }
-
          for (File entry : sourceFolder.listFiles()){
             if (entry.isDirectory()){
                 createEdge(sourceFolder, entry);
@@ -85,25 +88,27 @@ public class Graph {
         Vertex<File> sourceVertex = graphVertices.get(sourceFolder);
 
         return FileFolderAverageRecursive(sourceVertex, 0, 0);
-
     }
 
     private static long FileFolderAverageRecursive(Vertex<File> currentVert, long fileCount, long directoryCount){
+            
+        System.out.println(directoryCount);
+
+        directoryCount++;
 
         for (Edge<File> edge : currentVert.getEdges()){
 
             Vertex<File> destination = edge.getDestination();
 
             if (destination.getData().isDirectory()){
-                directoryCount = FileFolderAverageRecursive(destination, fileCount, directoryCount) + 1;
+                directoryCount += FileFolderAverageRecursive(destination, fileCount, (directoryCount));
             }
             else{
                 fileCount++;
             }
-
         }
-
-        return fileCount/directoryCount;
+        System.out.println(fileCount + " - " + directoryCount);
+        return fileCount/(directoryCount + 1);
 
     }
 
