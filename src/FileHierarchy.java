@@ -1,6 +1,7 @@
 package src;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -9,12 +10,14 @@ import java.util.Map;
 public class FileHierarchy{
 
     private File sourceFile;
+    private Graph currentGraph;
 
     /**
-     * Creates a new instance of the Graph file
+     * Creates an instance of the hierarchy starting from the given file
      * Utilized for traversing the file system finding adjecent files
      */
-    public FileHierarchy(){
+    public FileHierarchy(Object sourceFile){
+        currentGraph = new Graph(fileNameArgument(sourceFile));
     }
 
     /**
@@ -25,7 +28,7 @@ public class FileHierarchy{
      */
     public File getSourceFile(Object file){
 
-        File f = stringToAbsolute(fileNameArgument(file));
+        File f = stringToAbsolute(file);
 
         while (f.getParentFile().getParentFile() != null){
             f = f.getParentFile();
@@ -42,11 +45,10 @@ public class FileHierarchy{
      * @return - the complete hierarchy, represented by a Map structure that can be printed
      */
     public Map<File, Vertex<File>> createAbsoluteHierarchy(Object file){
-        String filename = fileNameArgument(file);
+        String filename = filetoString(file);
 
        return Graph.createHierarchy(getSourceFile(filename));
     }
-
 
     /**
      * Sets the source for future iterations
@@ -58,36 +60,34 @@ public class FileHierarchy{
      */
     public File setSourceFile(Object file){
 
-        String filename = fileNameArgument(file);
+        File filename = fileNameArgument(file);
 
         this.sourceFile = getSourceFile(filename);
         return sourceFile;
     }
 
-    public long countFiles(Object file){ 
-        String filename = fileNameArgument(file);
+public long countFiles(Object file){ 
+        File filename = fileNameArgument(file);
+
+        return Graph.fileCount(filename, 0);
+    }
+
+    public long countFilesAbsolute(Object file){ 
+        File filename = fileNameArgument(file);
 
         return Graph.fileCount(getSourceFile(filename), 0);
-    }
-    
-    public long countFolders(Object file){ 
-        String filename = fileNameArgument(file);
-
-        long count = 0;
-
-        return Graph.directoryCount(getSourceFile(filename), count);
-    }
-
-    public long countAverage(){
-        return Graph.FileFolderAverage();
     }
 
     public int currentMapSize(){
         return Graph.size();
     }
 
-    private File stringToAbsolute(String filename){
-        return new File(new File(filename).getAbsolutePath());
+    public void createDOT() throws IOException{
+        Graph.writeDot();
+    }
+
+    private File stringToAbsolute(Object filename){
+        return fileNameArgument(filename).getAbsoluteFile();
     }
 
     /**
@@ -95,13 +95,24 @@ public class FileHierarchy{
      * @param file 
      * @return
      */
-    private String fileNameArgument(Object file){
+    private File fileNameArgument(Object file){
+        File filename = null;
+        if(file instanceof String)
+            filename = (File) file;
+        
+        else if (file instanceof File)
+            filename = (File) file;
+
+        return filename;
+    }
+
+    private String filetoString(Object file){
         String filename = null;
         if(file instanceof String)
             filename = (String) file;
         
         else if (file instanceof File)
-            filename = ((File)file).getAbsolutePath();
+            filename = (String) file;
 
         return filename;
     }

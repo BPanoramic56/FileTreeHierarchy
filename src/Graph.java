@@ -2,15 +2,29 @@ package src;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class Graph {
 
-    private static Map<File, Vertex<File>> graphVertices = new HashMap<File, Vertex<File>>();
-    private static File sourceFolder;
+    private static Map<File, Vertex<File>> graphVertices;
+    private static File currentFolder;
 
+    public Graph(File f){
 
-    public Graph(){
+        if (f == currentFolder){
+            System.out.println("Current map is already made from the given file");
+            return;
+        }
+        
+        if (f.isDirectory())
+            currentFolder = f;
+
+        graphVertices = new HashMap<File, Vertex<File>>();
+        createHierarchy(f);
     }
 
     public static int size(){
@@ -18,7 +32,6 @@ public class Graph {
     }
 
     public static Map<File, Vertex<File>> createHierarchy(File sourceFolder){
-
         if (sourceFolder.listFiles() == null){
             return null;
         }
@@ -36,88 +49,28 @@ public class Graph {
     }
 
     public static long fileCount(File sourceFolderInit, long count){
-        graphVertices = new HashMap<File, Vertex<File>>();
-        sourceFolder = sourceFolderInit;
-        return fileCountRecursive(sourceFolder, count);
+        return graphVertices.size();
     }
 
-    private static long fileCountRecursive(File sourceFolder, long count){
+    public static void writeDot() throws IOException{
+        try(BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("g.dot")))){
+            out.write("digraph {"); 
+            out.newLine();
 
-        if (sourceFolder.listFiles() == null){
-            return 0;
-        }
+            Vertex<File> sourceVertex = graphVertices.get(currentFolder);
 
-        for (File entry : sourceFolder.listFiles()){
-            if (entry.isDirectory()){
-                createEdge(sourceFolder, entry);
-                count = fileCountRecursive(entry, count);
+            for(Edge<File> e: sourceVertex.getEdges()){
+                out.write(sourceVertex +" -> "+ e.getDestination());
+                out.newLine();
             }
-            else{
-                count++;
-                createEdge(sourceFolder, entry);
-            }
+            out.write("}");
         }
-        return count;
     }
-    
-    public static long directoryCount(File sourceFolderInit, long count){
-        graphVertices = new HashMap<File, Vertex<File>>();
-        sourceFolder = sourceFolderInit;
-        return directoryCountRecursive(sourceFolder, count);
-    }
-
-    private static long directoryCountRecursive(File sourceFolder, long count){
-
-        if (sourceFolder.listFiles() == null){
-            return 0;
-        }
-         for (File entry : sourceFolder.listFiles()){
-            if (entry.isDirectory()){
-                createEdge(sourceFolder, entry);
-                count = directoryCountRecursive(entry, count) + 1;
-            }
-        }
-        return count;
-    }
-
-    public static long FileFolderAverage(){
-        if (graphVertices == null || sourceFolder == null){
-            return 0;
-        }
-
-        Vertex<File> sourceVertex = graphVertices.get(sourceFolder);
-
-        return FileFolderAverageRecursive(sourceVertex, 0, 0);
-    }
-
-    private static long FileFolderAverageRecursive(Vertex<File> currentVert, long fileCount, long directoryCount){
-            
-        System.out.println(directoryCount);
-
-        directoryCount++;
-
-        for (Edge<File> edge : currentVert.getEdges()){
-
-            Vertex<File> destination = edge.getDestination();
-
-            if (destination.getData().isDirectory()){
-                directoryCount += FileFolderAverageRecursive(destination, fileCount, (directoryCount));
-            }
-            else{
-                fileCount++;
-            }
-        }
-        System.out.println(fileCount + " - " + directoryCount);
-        return fileCount/(directoryCount + 1);
-
-    }
-
 
     private static void addVertex(File vertexData){
         graphVertices.put(vertexData, new Vertex<File>(vertexData));
     } 
     
-
     private static void createEdge(File vertex1Data, File vertex2Data){
         Vertex<File> vertex1 = graphVertices.get(vertex1Data);
         Vertex<File> vertex2 = graphVertices.get(vertex2Data);

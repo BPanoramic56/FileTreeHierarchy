@@ -1,24 +1,19 @@
 package src;
 
+import java.io.IOException;
 
 public class Main{
-    public static void main(String[] args){
-        FileHierarchy FH = new FileHierarchy();
-        // System.out.println(FH.getSourceFile("/Users/brunogomespascotto/FileTreeHierarchy/src/FileHierarchy.java"));
-        // long start = System.nanoTime();
-        // FH.createAbsoluteHierarchy("/Users/brunogomespascotto/FileTreeHierarchy/src/FileHierarchy.java");
-        // System.out.println("AbsoluteHierarchy: " + (System.nanoTime() - start));
+    public static void main(String[] args) throws IOException{
+        FileHierarchy FH = new FileHierarchy("/Users/brunogomespascotto/Desktop/Classes/CS-2420");
+        System.out.println(FH.getSourceFile("/Users/brunogomespascotto/FileTreeHierarchy/src/FileHierarchy.java"));
+        long start = System.nanoTime();
+        FH.createAbsoluteHierarchy("/Users/brunogomespascotto/FileTreeHierarchy/src/FileHierarchy.java");
+        System.out.println("AbsoluteHierarchy: " + (System.nanoTime() - start));
         
-        // long start = System.nanoTime();
+        long files = FH.countFiles("/Users/brunogomespascotto/FileTreeHierarchy/src/FileHierarchy.java");
+        System.out.println("FileCount: " + (System.nanoTime() - start) + " - " + files);
 
-        // long files = FH.countFiles("/Users/brunogomespascotto/FileTreeHierarchy/src/FileHierarchy.java");
-        // System.out.println("FileCount: " + (System.nanoTime() - start) + " - " + files);
-        
-        long folders = FH.countFolders("/Users/brunogomespascotto/FileTreeHierarchy/src/FileHierarchy.java");
-        // System.out.println("FolderCount: " + (System.nanoTime() - start) + " - " + folders);
-        // System.out.println("File/Folder = " + (files/folders));
-
-        System.out.println("Average: " + FH.countAverage());
+        FH.createDOT();
 
         System.out.println("Size: " + FH.currentMapSize());
 
