@@ -10,14 +10,12 @@ import java.util.Map;
 public class FileHierarchy{
 
     private File sourceFile;
-    private Graph currentGraph;
-
     /**
      * Creates an instance of the hierarchy starting from the given file
      * Utilized for traversing the file system finding adjecent files
      */
     public FileHierarchy(Object sourceFile){
-        currentGraph = new Graph(fileNameArgument(sourceFile));
+        new Graph(fileNameArgument(sourceFile));
     }
 
     /**
