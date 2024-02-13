@@ -33,6 +33,22 @@ public class FileHierarchy{
         }
 
         return f;
+    } 
+    
+    /**
+     * Overloading the previous method to make sure Strings don't need to be reparsed
+     * @param filename - the file to start the hiearchy creation method
+     * @return the complete hierarchy, represented by a Map structure that can be printed
+     */
+    public File getSourceFile(String file){
+
+        File f = stringToAbsolute(file);
+
+        while (f.getParentFile().getParentFile() != null){
+            f = f.getParentFile();
+        }
+
+        return f;
     }
 
     /**
@@ -48,6 +64,15 @@ public class FileHierarchy{
     }
 
     /**
+     * Overloading the previous method to make sure Strings don't need to be reparsed
+     * @param filename - the file to start the hiearchy creation method
+     * @return the complete hierarchy, represented by a Map structure that can be printed
+     */
+    public Map<File, Vertex<File>> createHierarchy(String filename){
+        return Graph.createHierarchy(fileNameArgument(filename));
+    }
+
+    /**
      * Creates the hierarchy of the upmost accessible folder of a given file/filename
      * Utilizing the getSourceFile method, the program finds the upmost accesible file and creates the hierarchy starting from there
      * 
@@ -57,6 +82,15 @@ public class FileHierarchy{
     public Map<File, Vertex<File>> createAbsoluteHierarchy(Object file){
         String filename = (String) file;
 
+       return Graph.createHierarchy(getSourceFile(filename));
+    }
+
+    /**
+     * Overloading the previous method to make sure Strings don't need to be reparsed
+     * @param filename - the file to start the hiearchy creation method
+     * @return the complete hierarchy, represented by a Map structure that can be printed
+     */
+    public Map<File, Vertex<File>> createAbsoluteHierarchy(String filename){
        return Graph.createHierarchy(getSourceFile(filename));
     }
 
