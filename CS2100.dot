@@ -1,4 +1,5 @@
-digraph {
+digraph CS2100{
+	"FileTreeHierarchy" -> "CS2100.dot";
 	"FileTreeHierarchy" -> ".DS_Store";
 	"FileTreeHierarchy" -> "README.md";
 	"FileTreeHierarchy" -> "g.dot";

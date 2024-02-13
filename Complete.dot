@@ -1,0 +1,13 @@
+digraph Complete{
+	"MATH-1210/MATH-1210" -> "MATH-1210/.DS_Store";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week12.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week13.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week10.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week14.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week1.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week2.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week3.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week7.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week6.pdf";
+	"MATH-1210/MATH-1210" -> "MATH-1210/week5.pdf";
+}

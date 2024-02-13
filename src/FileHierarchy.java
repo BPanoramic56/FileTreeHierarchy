@@ -38,6 +38,18 @@ public class FileHierarchy{
     }
 
     /**
+     * Creates the hierarchy of the given folder and it's children
+     * 
+     * @param filename - the file to start the hiearchy creation method
+     * @return - the complete hierarchy, represented by a Map structure that can be printed
+     */
+    public Map<File, Vertex<File>> createHierarchy(Object file){
+        String filename = (String) file;
+
+       return Graph.createHierarchy(fileNameArgument(filename));
+    }
+
+    /**
      * Creates the hierarchy of the upmost accessible folder of a given file/filename
      * Utilizing the getSourceFile method, the program finds the upmost accesible file and creates the hierarchy starting from there
      * 
@@ -45,7 +57,7 @@ public class FileHierarchy{
      * @return - the complete hierarchy, represented by a Map structure that can be printed
      */
     public Map<File, Vertex<File>> createAbsoluteHierarchy(Object file){
-        String filename = filetoString(file);
+        String filename = (String) file;
 
        return Graph.createHierarchy(getSourceFile(filename));
     }
@@ -82,8 +94,8 @@ public long countFiles(Object file){
         return Graph.size();
     }
 
-    public void createDOT() throws IOException{
-        Graph.writeDot();
+    public void createDOT(String name) throws IOException{
+        Graph.writeDot(name);
     }
 
     private File stringToAbsolute(Object filename){
@@ -97,22 +109,13 @@ public long countFiles(Object file){
      */
     private File fileNameArgument(Object file){
         File filename = null;
-        if(file instanceof String)
-            filename = (File) file;
+
+        if(file instanceof String){
+            filename = new File( (String)file);
+        }
         
         else if (file instanceof File)
             filename = (File) file;
-
-        return filename;
-    }
-
-    private String filetoString(Object file){
-        String filename = null;
-        if(file instanceof String)
-            filename = (String) file;
-        
-        else if (file instanceof File)
-            filename = (String) file;
 
         return filename;
     }
